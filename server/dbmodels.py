@@ -13,9 +13,10 @@ class Users(db.Model):
     Timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 class Devices(db.Model):
-    Device_ID = db.Column(db.String(255), primary_key=True)
+    Device_ID = db.Column(db.Integer, primary_key=True)
     Device_Name = db.Column(db.String(45), nullable=True)
     User_ID = db.Column(db.Integer, db.ForeignKey('users.User_ID'), nullable=False)
+    Device_UID = db.Column(db.String(45), nullable=True)
 
 class DeviceMonitor(db.Model):
     Monitor_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -33,10 +34,3 @@ class DeviceInformation(db.Model):
     Area = db.Column(db.Text, nullable=True)
     Purpose = db.Column(db.Text, nullable=True)
     Device_ID = db.Column(db.String(255), db.ForeignKey('devices.Device_ID'), nullable=False)
-
-class Device(db.Model):
-    Device_ID = db.Column(db.String(255), db.ForeignKey('devices.Device_ID'), primary_key=True)
-    Device_Name = db.Column(db.String(45), nullable=True)
-    User_ID = db.Column(db.Integer, db.ForeignKey('users.User_ID'), nullable=False)
-    Monitor_ID = db.Column(db.Integer, db.ForeignKey('device_monitor.Monitor_ID'), nullable=False)
-    Info_ID = db.Column(db.Integer, db.ForeignKey('device_information.Info_ID'), nullable=False)

@@ -64,7 +64,7 @@ def add_device():
     user = Users.query.filter_by(Username=data["username"]).first()
     try:
         new_device = Devices(
-            Device_ID=data["device_id"],
+            Device_UID=data["device_uid"],
             Device_Name=data["device_name"],
             User_ID=user.User_ID,
         )
@@ -82,14 +82,14 @@ def retrieve_devices():
     devices = Devices.query.filter_by(User_ID=user.User_ID).all()
     device_list = []
     for device in devices:
-        device_list.append(device.Device_ID)
+        device_list.append(device.Device_UID)
     return jsonify({"devices": device_list}), 200
 
 
 @app.route("/retrieve_device_info", methods=["POST"])
 def retrieve_device_info():
     data = request.get_json()
-    device = Devices.query.filter_by(Device_ID=data["device_id"]).first()
+    device = Devices.query.filter_by(Device_UID=data["device_uid"]).first()
     info = DeviceInformation.query.filter_by(Info_ID=device.Info_ID).first()
     return (
         jsonify(
@@ -106,15 +106,17 @@ def retrieve_device_info():
 
 @app.route("/device_monitor", methods=["POST"])
 def add_data():
-    content = request.json
-    ppm = content.get("ppm")
-    id = content.get("device_id")
+    data = request.json
+    device = Devices.query.filter_by(Device_UID=data["device_uid"]).first()
+    if device is None:
+        return jsonify({"message": "device not found"}), 404
+
     new_data = DeviceMonitor(
-        Parts_Per_Million=ppm,
-        Temperature="0",
-        Relative_Humidity="0",
-        Device_ID=id,
-        Danger="0",
+        Parts_Per_Million=data["ppm"],
+        Temperature=data["temp"],
+        Relative_Humidity=data["hum"],
+        Device_ID=device.Device_ID,
+        Danger=data["danger"],
     )
 
     try:
@@ -126,27 +128,33 @@ def add_data():
         return jsonify({"message": "failed" + str(e)}), 500
 
 
-@app.route("/device_monitor/<device_id>", methods=["GET"])
-def get_data(device_id):
+@app.route("/read_monitor/", methods=["POST"])
+def get_data():
+    data = request.json
+    device_uid = data["device_uid"]
     try:
-        # import logging
-        # logging.basicConfig()
-        # logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+        device = Devices.query.filter_by(Device_UID=device_uid).first()
+        if device is None:
+            return jsonify({"message": "Device not found."}), 404
+
         latest_data = (
-            DeviceMonitor.query.filter_by(Device_ID=device_id)
+            DeviceMonitor.query.filter_by(Device_ID=device.Device_ID)
             .order_by(DeviceMonitor.Timestamp.desc())
             .first()
         )
-        return jsonify(
-            {
-                "ppm": latest_data.Parts_Per_Million,
-                "temp": latest_data.Temperature,
-                "hum": latest_data.Relative_Humidity,
-                "danger": latest_data.Danger,
-            }
-        )
+        if latest_data is not None:
+            return jsonify(
+                {
+                    "ppm": latest_data.Parts_Per_Million,
+                    "temp": latest_data.Temperature,
+                    "hum": latest_data.Relative_Humidity,
+                    "danger": latest_data.Danger,
+                }
+            )
+        else:
+            return jsonify({"message": "No data available for the specified device."}), 404
     except Exception as e:
-        return jsonify({"message": "failed" + str(e)}), 500
+        return jsonify({"message": "Failed: " + str(e)}), 500
 
 
 if __name__ == "__main__":

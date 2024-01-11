@@ -13,26 +13,26 @@
         android:layout_marginBottom="24dp" />
 
     <EditText
-        android:id="@+id/editTextUsername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Username"
-        android:inputType="text"
-        android:layout_marginBottom="16dp"/>
+        android:id="@+id/username"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Username"
+    android:inputType="text"
+    android:layout_marginBottom="16dp"/>
 
     <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:layout_marginBottom="16dp"/>
+        android:id="@+id/password"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Password"
+    android:inputType="textPassword"
+    android:layout_marginBottom="16dp"/>
 
     <Button
-        android:id="@+id/buttonLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login"/>
+        android:id="@+id/login"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Login"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,5 +41,14 @@
         android:layout_marginTop="16dp"
         android:text="Forgot Password?"
         android:textColor="@android:color/darker_gray"/>
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Register"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/darker_gray" />
 
 </LinearLayout>
