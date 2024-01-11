@@ -3,17 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/pastel_dark_blue">
 
     <Spinner
         android:id="@+id/deviceSpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"/>
 
     <TextView
         android:id="@+id/dataTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="80dp"
+        android:textSize="16sp" />
+
+
 </LinearLayout>

@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
             JSONObject json = new JSONObject();
             try {
-                json.put("device_id", deviceId);
+                json.put("device_uid", deviceId);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
