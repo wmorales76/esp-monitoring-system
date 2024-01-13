@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/homeicon"
+    android:title="@string/home" />
+
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/historyicon"
+    android:title="@string/history" />
+
+    <item
+        android:id="@+id/navigation_logout"
+        android:icon="@drawable/logouticon"
+    android:title="@string/logout" />
+</menu>

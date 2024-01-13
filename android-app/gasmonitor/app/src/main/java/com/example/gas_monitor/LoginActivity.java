@@ -21,6 +21,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import java.io.IOException;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -97,8 +100,12 @@ public class LoginActivity extends AppCompatActivity {
     private void handleLoginResult(String result, String username) {
         if (result != null && result.contains("logged in successfully")) {
             // Login successful, transition to MainActivity
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("USERNAME_KEY", username);
+            editor.putBoolean("LOGGED_IN_KEY", true);
+            editor.apply();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("USERNAME_KEY", username);
             startActivity(intent);
             finish();
         } else {

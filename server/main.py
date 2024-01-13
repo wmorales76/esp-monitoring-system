@@ -7,12 +7,10 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:wmorales@localhost/capstone"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Optional: suppresses a warning
-
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
-
 
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -29,7 +27,6 @@ def signup():
     db.session.commit()
     return jsonify({"message": "registered successfully"}), 201
 
-
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -37,7 +34,6 @@ def login():
     if not user or not check_password_hash(user.Hash, data["password"]):
         return jsonify({"message": "login failed"}), 401
     return jsonify({"message": "logged in successfully"}), 200
-
 
 @app.route("/add_device_info", methods=["POST"])
 def add_device_info():
@@ -56,7 +52,6 @@ def add_device_info():
         ),
         201,
     )
-
 
 @app.route("/add_device", methods=["POST"])
 def add_device():
@@ -77,6 +72,9 @@ def add_device():
 
 @app.route("/retrieve_devices", methods=["POST"])
 def retrieve_devices():
+    #import logging
+    #logging.basicConfig()
+    #logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
     data = request.get_json()
     user = Users.query.filter_by(Username=data["username"]).first()
     devices = Devices.query.filter_by(User_ID=user.User_ID).all()
@@ -84,7 +82,6 @@ def retrieve_devices():
     for device in devices:
         device_list.append(device.Device_UID)
     return jsonify({"devices": device_list}), 200
-
 
 @app.route("/retrieve_device_info", methods=["POST"])
 def retrieve_device_info():
@@ -103,7 +100,6 @@ def retrieve_device_info():
         200,
     )
 
-
 @app.route("/device_monitor", methods=["POST"])
 def add_data():
     data = request.json
@@ -118,7 +114,6 @@ def add_data():
         Device_ID=device.Device_ID,
         Danger=data["danger"],
     )
-
     try:
         db.session.add(new_data)
         db.session.commit()
@@ -126,7 +121,6 @@ def add_data():
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": "failed" + str(e)}), 500
-
 
 @app.route("/read_monitor/", methods=["POST"])
 def get_data():
@@ -152,7 +146,8 @@ def get_data():
                 }
             )
         else:
-            return jsonify({"message": "No data available for the specified device."}), 404
+            
+            return jsonify({"message":"No data available for the specified device."}), 404
     except Exception as e:
         return jsonify({"message": "Failed: " + str(e)}), 500
 

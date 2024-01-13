@@ -22,26 +22,74 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
+
+import com.ekn.gruzer.gaugelibrary.ArcGauge;
+import com.ekn.gruzer.gaugelibrary.HalfGauge;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     private Spinner deviceSpinner;
-    private TextView dataTextView;
+    private TextView dangervalueView;
     private ArrayList<String> deviceList = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private String username;
     private final long REFRESH_INTERVAL = 2000; // 2 seconds
 
+    ArcGauge ppmGauge;
+    ArcGauge tempGauge;
+    ArcGauge humGauge;
+    HalfGauge dangerGauge;
+    com.ekn.gruzer.gaugelibrary.Range range1, range2, range3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);;
 
-        Intent intent = getIntent();
-        username = intent.getStringExtra("USERNAME_KEY");
+        range1 = new com.ekn.gruzer.gaugelibrary.Range();
+        range2 = new com.ekn.gruzer.gaugelibrary.Range();
+        range3 = new com.ekn.gruzer.gaugelibrary.Range();
+        range1.setFrom(0);range1.setTo(250);range1.setColor(getResources().getColor(R.color.green));
+        range2.setFrom(250);range2.setTo(500);range2.setColor(getResources().getColor(R.color.orange));
+        range3.setFrom(500);range3.setTo(1000);range3.setColor(getResources().getColor(R.color.red));
+
+        ppmGauge = findViewById(R.id.ppmGauge);
+        tempGauge = findViewById(R.id.tempGauge);
+        humGauge = findViewById(R.id.humGauge);
+        dangerGauge = findViewById(R.id.dangerGauge);
+
+        ppmGauge.setMinValue(0);ppmGauge.setMaxValue(1000);ppmGauge.setValue(0);
+        tempGauge.setMinValue(0);tempGauge.setMaxValue(100);tempGauge.setValue(0);
+        humGauge.setMinValue(0);humGauge.setMaxValue(100);humGauge.setValue(0);
+        dangerGauge.setMinValue(0);dangerGauge.setMaxValue(5);dangerGauge.setValue(0);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isLoggedIn = sharedPreferences.getBoolean("LOGGED_IN_KEY", false);
+        if (!isLoggedIn) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            username = sharedPreferences.getString("USERNAME_KEY", "");
+        }
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) {
+                // Optionally refresh MainActivity or do nothing if it's already displaying
+            } else if (itemId == R.id.navigation_history) {
+                startHistoryActivity();
+            } else if (itemId == R.id.navigation_logout) {
+                logoutUser();
+            }
+            return true;
+        });
 
         deviceSpinner = findViewById(R.id.deviceSpinner);
-        dataTextView = findViewById(R.id.dataTextView);
+        dangervalueView = findViewById(R.id.dangervalueview);
         deviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -55,7 +103,21 @@ public class MainActivity extends AppCompatActivity {
 
         fetchDeviceList();
     }
+    private void startHistoryActivity() {
+        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+        startActivity(intent);
+    }
 
+    private void logoutUser() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("LOGGED_IN_KEY");
+        editor.remove("USERNAME_KEY");
+        editor.apply();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
     private void fetchDeviceList() {
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
@@ -123,13 +185,19 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
+                    assert response.body() != null;
                     String responseData = response.body().string();
                     JSONObject jsonResponse = new JSONObject(responseData);
-                    String displayText = "PPM: " + jsonResponse.getString("ppm") +
-                            "\nTemp: " + jsonResponse.getString("temp") +
-                            "\nHumidity: " + jsonResponse.getString("hum") +
-                            "\nDanger: " + jsonResponse.getString("danger");
-                    handler.post(() -> dataTextView.setText(displayText));
+                    ppmGauge.setValue(Float.parseFloat(jsonResponse.getString("ppm")));
+                    humGauge.setValue(Float.parseFloat(jsonResponse.getString("hum")));
+                    dangervalueView.setText(jsonResponse.getString("danger"));
+                    if(jsonResponse.getString("danger").equals("Low")) {
+                        dangerGauge.setValue(0);
+                    }else if(jsonResponse.getString("danger").equals("Medium")) {
+                        dangerGauge.setValue(2);
+                    }else if(jsonResponse.getString("danger").equals("High")) {
+                        dangerGauge.setValue(5);
+                    }
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
@@ -155,4 +223,5 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
     }
+
 }
