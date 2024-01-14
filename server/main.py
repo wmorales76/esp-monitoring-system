@@ -38,18 +38,21 @@ def login():
 @app.route("/add_device_info", methods=["POST"])
 def add_device_info():
     data = request.get_json()
+    device = Devices.query.filter_by(Device_UID=data["device_uid"]).first()
+    if device is None:
+        return jsonify({"message": "device not found"}), 404
+
     new_info = DeviceInformation(
         Building=data["building"],
         Room=data["room"],
         Area=data["area"],
         Purpose=data["purpose"],
+        Device_ID=device.Device_ID  # Corrected this line
     )
     db.session.add(new_info)
     db.session.commit()
     return (
-        jsonify(
-            {"message": "device info added successfully", "info_id": new_info.Info_ID}
-        ),
+        jsonify({"message": "device info added successfully", "info_id": new_info.Info_ID}),
         201,
     )
 
