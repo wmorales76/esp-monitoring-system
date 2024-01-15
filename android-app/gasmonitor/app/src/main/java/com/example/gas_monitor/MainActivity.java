@@ -29,14 +29,20 @@ import android.preference.PreferenceManager;
 import com.ekn.gruzer.gaugelibrary.ArcGauge;
 import com.ekn.gruzer.gaugelibrary.HalfGauge;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final float THRESHOLD_PPM_LEVEL = 2000;
     private Spinner deviceSpinner;
     private TextView dangervalueView;
     private ArrayList<String> deviceList = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private String username;
     private final long REFRESH_INTERVAL = 2000; // 2 seconds
+    private boolean isNotificationServiceRunning = false;
 
     ArcGauge ppmGauge;
     ArcGauge tempGauge;
@@ -198,13 +204,30 @@ public class MainActivity extends AppCompatActivity {
                     }else if(jsonResponse.getString("danger").equals("High")) {
                         dangerGauge.setValue(5);
                     }
+                    float ppmLevel = Float.parseFloat(jsonResponse.getString("ppm")); // Assuming ppmGauge.getValue() returns the current ppm level
+                    if (ppmLevel > THRESHOLD_PPM_LEVEL && !isNotificationServiceRunning) {
+                        Log.d("MainActivity", "Starting Sound Notification Service" + ppmLevel + " " + THRESHOLD_PPM_LEVEL);
+                        startSoundNotificationService();
+                    } else if (ppmLevel <= THRESHOLD_PPM_LEVEL && isNotificationServiceRunning) {
+                        Log.d("MainActivity", "StoPping Sound Notification Service" + ppmLevel + " " + THRESHOLD_PPM_LEVEL);
+                        stopSoundNotificationService();
+                    }
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
         }).start();
     }
-
+    private void startSoundNotificationService() {
+        Intent serviceIntent = new Intent(this, SoundNotificationService.class);
+        startService(serviceIntent);
+        isNotificationServiceRunning = true;
+    }
+    private void stopSoundNotificationService() {
+        Intent serviceIntent = new Intent(this, SoundNotificationService.class);
+        stopService(serviceIntent);
+        isNotificationServiceRunning = false;
+    }
     private void startAutoRefresh() {
         handler.postDelayed(new Runnable() {
             @Override
