@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
-            String url = "http://192.168.0.243:5000/signup";
+            String url = "http://3.145.132.225:5000/signup";
             okhttp3.MediaType JSON = MediaType.parse("application/json; charset=utf-8");
             okhttp3.RequestBody body = okhttp3.RequestBody.create(JSON, signupPayload.toString());
             okhttp3.Request request = new okhttp3.Request.Builder()

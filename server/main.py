@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify
 from dbmodels import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.exc import IntegrityError
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:wmorales@localhost/capstone"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://admin:wmorales@capstone-database.cbgkiweqag9q.us-east-2.rds.amazonaws.com:3306/capstone"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Optional: suppresses a warning
 db.init_app(app)
 
@@ -15,17 +17,21 @@ with app.app_context():
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json()
-    hashed_password = generate_password_hash(data["password"], method="pbkdf2:sha256")
+    hashed_password = generate_password_hash(data["password"], method="sha256")
     new_user = Users(
         Username=data["username"],
         Hash=hashed_password,
         Name=data["name"],
         Email=data["email"],
+
     )
 
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({"message": "registered successfully"}), 201
+    if not Users.query.filter_by(Username=data["username"]).first():
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "registered successfully"}), 201
+    else:
+        return jsonify({"message": "username already exists"}), 409
 
 @app.route("/login", methods=["POST"])
 def login():

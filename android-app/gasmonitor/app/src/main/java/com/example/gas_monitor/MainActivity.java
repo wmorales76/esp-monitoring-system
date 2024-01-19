@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.0.243:5000/retrieve_devices")
+                    .url("http://3.145.132.225:5000/retrieve_devices")
                     .post(body)
                     .build();
 
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.0.243:5000/read_monitor/")
+                    .url("http://3.145.132.225:5000/read_monitor/")
                     .post(body)
                     .build();
 

@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://192.168.0.243:5000/login")
+                    .url("http://3.145.132.225:5000/login")
                     .post(body)
                     .build();
 
