@@ -102,6 +102,23 @@ def retrieve_device_info():
         ),
         200,
     )
+@app.route("/retrieve_monitoring_data", methods=["POST"])
+def retrieve_monitoring_data():
+    data = request.get_json()
+    device = Devices.query.filter_by(Device_UID=data["device_uid"]).first()
+    if device is None:
+        return jsonify({"message": "device not found"}), 404
+
+    monitoring_data = DeviceMonitor.query.filter_by(Device_ID=device.Device_ID).all()
+    data_list = []
+    for data in monitoring_data:
+        data_list.append({
+            "ppm": data.Parts_Per_Million,
+            "temp": data.Temperature,
+            "hum": data.Relative_Humidity,
+            "danger": data.Danger
+        })
+    return jsonify({"monitoring_data": data_list}), 200
 
 @app.route("/device_monitor", methods=["POST"])
 def add_data():
