@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 from dbmodels import *
-from werkzeug.security import generate_password_hash, check_password_hash
+from hashlib import sha256
 from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
+import hashlib
+from werkzeug.security import check_password_hash
+import hashlib
 
 app = Flask(__name__)
 
@@ -14,16 +16,21 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+def hash_password(username, password):
+    sha256_hash = hashlib.sha256()
+    string = username + password
+    sha256_hash.update(string.encode('utf-8'))
+    return sha256_hash.hexdigest()
+
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.get_json()
-    hashed_password = generate_password_hash(data["password"], method="sha256")
+    hashed_password = hash_password(data["username"], data["password"])
     new_user = Users(
         Username=data["username"],
         Hash=hashed_password,
         Name=data["name"],
         Email=data["email"],
-
     )
 
     if not Users.query.filter_by(Username=data["username"]).first():
@@ -37,7 +44,8 @@ def signup():
 def login():
     data = request.get_json()
     user = Users.query.filter_by(Username=data["username"]).first()
-    if not user or not check_password_hash(user.Hash, data["password"]):
+    hashed_password = hash_password(data["username"], data["password"])
+    if not user or user.Hash != hashed_password:
         return jsonify({"message": "login failed"}), 401
     return jsonify({"message": "logged in successfully"}), 200
 
@@ -108,6 +116,8 @@ def retrieve_device_info():
         ),
         200,
     )
+
+
 @app.route("/retrieve_monitoring_data", methods=["POST"])
 def retrieve_monitoring_data():
     data = request.get_json()
