@@ -16,11 +16,13 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+
 def hash_password(username, password):
     sha256_hash = hashlib.sha256()
     string = username + password
     sha256_hash.update(string.encode('utf-8'))
     return sha256_hash.hexdigest()
+
 
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -39,6 +41,7 @@ def signup():
         return jsonify({"message": "registered successfully"}), 201
     else:
         return jsonify({"message": "username already exists"}), 409
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -69,6 +72,7 @@ def add_device_info():
         jsonify({"message": "device info added successfully", "info_id": new_info.Info_ID}),
         201,
     )
+
 
 @app.route("/add_device", methods=["POST"])
 def add_device():
@@ -104,7 +108,7 @@ def retrieve_devices():
 def retrieve_device_info():
     data = request.get_json()
     device = Devices.query.filter_by(Device_UID=data["device_uid"]).first()
-    info = DeviceInformation.query.filter_by(Info_ID=device.Info_ID).first()
+    info = DeviceInformation.query.filter_by(Device_ID=device.Device_ID).first()
     return (
         jsonify(
             {

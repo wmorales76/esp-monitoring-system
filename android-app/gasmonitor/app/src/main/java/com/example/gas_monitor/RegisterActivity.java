@@ -18,7 +18,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
-
+    private final String serverUrl = "18.220.56.59:5000";
     private EditText usernameEditText;
     private EditText passwordEditText;
     private EditText nameEditText;
@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
-            String url = "http://3.145.132.225:5000/signup";
+            String url = "http://"+ serverUrl+"/signup";
             okhttp3.MediaType JSON = MediaType.parse("application/json; charset=utf-8");
             okhttp3.RequestBody body = okhttp3.RequestBody.create(JSON, signupPayload.toString());
             okhttp3.Request request = new okhttp3.Request.Builder()

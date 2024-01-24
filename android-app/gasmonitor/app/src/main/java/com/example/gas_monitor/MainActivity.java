@@ -34,14 +34,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private final String serverUrl = "18.220.56.59:5000";
+    private boolean isUserLoggedOut = false;
     private Spinner deviceSpinner;
     private TextView dangervalueView;
     private ArrayList<String> deviceList = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private String username;
     private  String dangerLevel = "";
-    private final long REFRESH_INTERVAL = 2000; // 2 seconds
+    private final long REFRESH_INTERVAL = 5000; // 2 seconds
 
     ArcGauge ppmGauge;
     ArcGauge tempGauge;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }else{
             username = sharedPreferences.getString("USERNAME_KEY", "");
+
         }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -105,9 +107,14 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        startPPMMonitorService();
+    }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         fetchDeviceList();
-        Log.d("MainActivity", "onCreate: " + username);
     }
     private void startHistoryActivity() {
         Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
@@ -120,9 +127,14 @@ public class MainActivity extends AppCompatActivity {
         editor.remove("LOGGED_IN_KEY");
         editor.remove("USERNAME_KEY");
         editor.apply();
+        isUserLoggedOut = true;
+        handler.removeCallbacksAndMessages(null);
+        Intent serviceIntent = new Intent(this, PPMMonitorService.class);
+        stopService(serviceIntent);
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+
     }
     private void fetchDeviceList() {
         new Thread(() -> {
@@ -139,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://3.145.132.225:5000/retrieve_devices")
+                    .url("http://" + serverUrl +"/retrieve_devices")
                     .post(body)
                     .build();
 
@@ -184,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://3.145.132.225:5000/read_monitor/")
+                    .url("http://"+serverUrl +"/read_monitor/")
                     .post(body)
                     .build();
 
@@ -206,7 +218,9 @@ public class MainActivity extends AppCompatActivity {
                     }else if(jsonResponse.getString("danger").equals("High")) {
                         dangerGauge.setValue(5);
                     }
-                    startPPMMonitorService();
+
+                    updatePPMValue();
+
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
@@ -215,7 +229,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startPPMMonitorService() {
-        Log.d("MainActivity", "startPPMMonitorService: " + dangerLevel);
         Intent serviceIntent = new Intent(this, PPMMonitorService.class);
         // Example of passing a variable. Replace with actual data.
         serviceIntent.putExtra("dangerLevel", dangerLevel); // Replace with actual key and value
@@ -234,7 +247,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }, REFRESH_INTERVAL);
     }
-
+    private void updatePPMValue() {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("UPDATE_DANGER_LEVEL");
+        if(isUserLoggedOut){
+            broadcastIntent.putExtra("dangerLevel", "Low");
+        }
+        broadcastIntent.putExtra("dangerLevel", dangerLevel);
+        sendBroadcast(broadcastIntent);
+    }
 
 
 }

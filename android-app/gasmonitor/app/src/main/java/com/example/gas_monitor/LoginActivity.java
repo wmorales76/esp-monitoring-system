@@ -26,7 +26,7 @@ import android.preference.PreferenceManager;
 
 
 public class LoginActivity extends AppCompatActivity {
-
+    private final String serverUrl = "18.220.56.59:5000";
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
@@ -82,12 +82,13 @@ public class LoginActivity extends AppCompatActivity {
             );
 
             Request request = new Request.Builder()
-                    .url("http://3.145.132.225:5000/login")
+                    .url("http://"+serverUrl+"/login")
                     .post(body)
                     .build();
 
             try {
                 Response response = client.newCall(request).execute();
+                assert response.body() != null;
                 String result = response.body().string();
                 handler.post(() -> handleLoginResult(result, username));
             } catch (IOException e) {

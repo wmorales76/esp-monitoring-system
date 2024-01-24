@@ -1,7 +1,9 @@
 package com.example.gas_monitor;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,9 +15,18 @@ import android.app.PendingIntent;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
+
 public class PPMMonitorService extends Service {
     private MediaPlayer alarmMediaPlayer;
     private String variableFromMainActivity; // Variable received from MainActivity
+
+    private BroadcastReceiver updateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            variableFromMainActivity = intent.getStringExtra("dangerLevel");
+            monitorPPM();
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -28,6 +39,12 @@ public class PPMMonitorService extends Service {
         variableFromMainActivity = intent.getStringExtra("dangerLevel"); // Retrieve variable from MainActivity
         startForegroundService();
         monitorPPM();
+
+        // Register the receiver when the service starts
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("UPDATE_DANGER_LEVEL");
+        registerReceiver(updateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+
         return START_STICKY;
     }
 
@@ -60,13 +77,13 @@ public class PPMMonitorService extends Service {
     }
 
     private void monitorPPM() {
-    if (variableFromMainActivity.equals("High")) {
-        Log.d("PPM", "High PPM detected");
-        triggerAlarm();
-    } else {
-        Log.d("PPM", "Low PPM detected");
-        stopAlarm();
-    }
+        if (variableFromMainActivity.equals("High")) {
+            Log.d("PPM", "High PPM detected");
+            triggerAlarm();
+        } else {
+            Log.d("PPM", "Low PPM detected");
+            stopAlarm();
+        }
     }
 
     private void triggerAlarm() {
@@ -89,6 +106,8 @@ public class PPMMonitorService extends Service {
         if (alarmMediaPlayer != null) {
             alarmMediaPlayer.release();
         }
+        // Unregister the receiver when the service is destroyed
+        unregisterReceiver(updateReceiver);
     }
 
     @Nullable
