@@ -102,22 +102,13 @@ public class MainActivity extends AppCompatActivity {
 
         deviceSpinner = findViewById(R.id.deviceSpinner);
         dangervalueView = findViewById(R.id.dangervalueview);
-        deviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                fetchDeviceData(deviceList.get(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
         startPPMMonitorService();
     }
     @Override
     protected void onStart() {
         super.onStart();
         fetchDeviceList();
+        startAutoRefresh();
     }
 
     private void fetchDeviceList() {
@@ -154,10 +145,6 @@ public class MainActivity extends AppCompatActivity {
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this,
                                 android.R.layout.simple_spinner_dropdown_item, deviceList);
                         deviceSpinner.setAdapter(adapter);
-                        if (!deviceList.isEmpty()) {
-                            fetchDeviceData(deviceList.get(0));
-                            startAutoRefresh();
-                        }
                     });
                 }
             } catch (IOException | JSONException e) {
@@ -197,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     dangerLevel = jsonResponse.getString("danger");
                     if(jsonResponse.getString("danger").equals("Low")) {
                         dangerGauge.setValue(0);
-                    }else if(jsonResponse.getString("danger").equals("Medium")) {
+                    }else if(jsonResponse.getString("danger").equals("Med")) {
                         dangerGauge.setValue(2);
                     }else if(jsonResponse.getString("danger").equals("High")) {
                         dangerGauge.setValue(5);
