@@ -34,21 +34,26 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    //constant variables, flags, and other
     private final String serverUrl = "18.220.56.59:5000";
     private boolean isUserLoggedOut = false;
-    private Spinner deviceSpinner;
-    private TextView dangervalueView;
-    private ArrayList<String> deviceList = new ArrayList<>();
-    private Handler handler = new Handler(Looper.getMainLooper());
     private String username;
     private  String dangerLevel = "";
     private final long REFRESH_INTERVAL = 5000; // 2 seconds
 
-    ArcGauge ppmGauge;
-    ArcGauge tempGauge;
-    ArcGauge humGauge;
-    HalfGauge dangerGauge;
+    //UI elements
+    private Spinner deviceSpinner;
+    private TextView dangervalueView;
+    private ArrayList<String> deviceList = new ArrayList<>();
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private ArcGauge ppmGauge;
+    private ArcGauge tempGauge;
+    private ArcGauge humGauge;
+    private HalfGauge dangerGauge;
     com.ekn.gruzer.gaugelibrary.Range range1, range2, range3;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,33 +114,12 @@ public class MainActivity extends AppCompatActivity {
         });
         startPPMMonitorService();
     }
-
-
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         fetchDeviceList();
     }
-    private void startHistoryActivity() {
-        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-        startActivity(intent);
-    }
 
-    private void logoutUser() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove("LOGGED_IN_KEY");
-        editor.remove("USERNAME_KEY");
-        editor.apply();
-        isUserLoggedOut = true;
-        handler.removeCallbacksAndMessages(null);
-        Intent serviceIntent = new Intent(this, PPMMonitorService.class);
-        stopService(serviceIntent);
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-
-    }
     private void fetchDeviceList() {
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
@@ -218,23 +202,19 @@ public class MainActivity extends AppCompatActivity {
                     }else if(jsonResponse.getString("danger").equals("High")) {
                         dangerGauge.setValue(5);
                     }
-
                     updatePPMValue();
-
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
         }).start();
     }
-
     private void startPPMMonitorService() {
         Intent serviceIntent = new Intent(this, PPMMonitorService.class);
         // Example of passing a variable. Replace with actual data.
         serviceIntent.putExtra("dangerLevel", dangerLevel); // Replace with actual key and value
         startService(serviceIntent);
     }
-
     private void startAutoRefresh() {
         handler.postDelayed(new Runnable() {
             @Override
@@ -256,6 +236,24 @@ public class MainActivity extends AppCompatActivity {
         broadcastIntent.putExtra("dangerLevel", dangerLevel);
         sendBroadcast(broadcastIntent);
     }
+    private void startHistoryActivity() {
+        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+        startActivity(intent);
+    }
+    private void logoutUser() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("LOGGED_IN_KEY");
+        editor.remove("USERNAME_KEY");
+        editor.apply();
+        isUserLoggedOut = true;
+        handler.removeCallbacksAndMessages(null);
+        Intent serviceIntent = new Intent(this, PPMMonitorService.class);
+        stopService(serviceIntent);
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
 
+    }
 
 }

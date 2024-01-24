@@ -26,12 +26,11 @@ import android.preference.PreferenceManager;
 
 
 public class LoginActivity extends AppCompatActivity {
+    private final OkHttpClient client = new OkHttpClient();
     private final String serverUrl = "18.220.56.59:5000";
     private EditText usernameEditText;
     private EditText passwordEditText;
-    private Button loginButton;
-    private Button registerButton;
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +40,8 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize UI components
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password);
-        loginButton = (Button) findViewById(R.id.login);
-        registerButton = (Button) findViewById(R.id.register);
+        Button loginButton = (Button) findViewById(R.id.login);
+        Button registerButton = (Button) findViewById(R.id.register);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Create a new thread for network operations
         new Thread(() -> {
-            OkHttpClient client = new OkHttpClient();
+
             RequestBody body = RequestBody.create(
                     MediaType.parse("application/json; charset=utf-8"),
                     loginPayload.toString()
