@@ -50,14 +50,12 @@ public class PPMMonitorService extends Service {
 
     private void startForegroundService() {
         // Create a notification channel for Android Oreo and above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelId = "PPM_Alarm_Channel";
-            String channelName = "PPM Alarm Notification";
-            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(channel);
-            }
+        String channelId = "PPM_Alarm_Channel";
+        String channelName = "PPM Alarm Notification";
+        NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager != null) {
+            manager.createNotificationChannel(channel);
         }
 
         // Intent to stop the alarm
