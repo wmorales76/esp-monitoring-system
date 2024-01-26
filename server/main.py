@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from dbmodels import *
 from hashlib import sha256
 from sqlalchemy.exc import IntegrityError
@@ -22,6 +22,10 @@ def hash_password(username, password):
     string = username + password
     sha256_hash.update(string.encode('utf-8'))
     return sha256_hash.hexdigest()
+
+@app.route("/")
+def home():
+    return render_template('index.html')
 
 
 @app.route("/signup", methods=["POST"])
