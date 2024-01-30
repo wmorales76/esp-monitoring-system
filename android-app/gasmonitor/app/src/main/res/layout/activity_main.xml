@@ -8,71 +8,78 @@
 
     <TextView
         android:id="@+id/dangerview"
-        android:layout_width="53dp"
-        android:layout_height="24dp"
-        android:text="Danger Level"
+        android:layout_width="165dp"
+        android:layout_height="62dp"
+        android:text="Danger Level: "
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dangerGauge"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintHorizontal_bias="0.382"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.672" />
+        app:layout_constraintTop_toBottomOf="@+id/humGauge"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
         android:id="@+id/dangervalueview"
-        android:layout_width="53dp"
-        android:layout_height="24dp"
+        android:layout_width="179dp"
+        android:layout_height="50dp"
         android:text="@string/dangervalue"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dangerview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.514"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.672" />
+        app:layout_constraintHorizontal_bias="0.714"
+        app:layout_constraintStart_toEndOf="@+id/dangerview"
+        app:layout_constraintTop_toTopOf="@+id/dangerview"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
         android:id="@+id/ppmview"
-        android:layout_width="38dp"
-        android:layout_height="22dp"
+        android:layout_width="69dp"
+        android:layout_height="33dp"
         android:text="PPM"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.252"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.215" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ppmGauge"
+        app:layout_constraintEnd_toEndOf="@+id/ppmGauge"
+        app:layout_constraintHorizontal_bias="0.646"
+        app:layout_constraintStart_toStartOf="@+id/ppmGauge"
+        app:layout_constraintTop_toTopOf="@+id/ppmGauge"
+        app:layout_constraintVertical_bias="0.386" />
 
     <TextView
         android:id="@+id/humview"
-        android:layout_width="64dp"
-        android:layout_height="23dp"
+        android:layout_width="89dp"
+        android:layout_height="35dp"
         android:text="Humidity"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.442" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/humGauge"
+        app:layout_constraintEnd_toEndOf="@+id/humGauge"
+        app:layout_constraintHorizontal_bias="0.591"
+        app:layout_constraintStart_toStartOf="@+id/humGauge"
+        app:layout_constraintTop_toTopOf="@+id/humGauge"
+        app:layout_constraintVertical_bias="0.329" />
 
     <TextView
         android:id="@+id/tempview"
-        android:layout_width="81dp"
-        android:layout_height="25dp"
+        android:layout_width="118dp"
+        android:layout_height="34dp"
         android:text="Temperature"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.787"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.212" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tempGauge"
+        app:layout_constraintEnd_toEndOf="@+id/tempGauge"
+        app:layout_constraintHorizontal_bias="0.531"
+        app:layout_constraintStart_toStartOf="@+id/tempGauge"
+        app:layout_constraintTop_toTopOf="@+id/tempGauge"
+        app:layout_constraintVertical_bias="0.384" />
 
     <Spinner
         android:id="@+id/deviceSpinner"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_width="403dp"
+        android:layout_height="62dp"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -82,48 +89,49 @@
 
     <com.ekn.gruzer.gaugelibrary.HalfGauge
         android:id="@+id/dangerGauge"
-        android:layout_width="188dp"
-        android:layout_height="147dp"
-        android:layout_marginTop="420dp"
+        android:layout_width="354dp"
+        android:layout_height="237dp"
+        android:layout_marginTop="9dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deviceSpinner" />
+        app:layout_constraintTop_toBottomOf="@+id/humGauge"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.ekn.gruzer.gaugelibrary.ArcGauge
         android:id="@+id/ppmGauge"
-        android:layout_width="146dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="92dp"
+        android:layout_width="182dp"
+        android:layout_height="178dp"
+        android:layout_marginTop="120dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintHorizontal_bias="0.069"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deviceSpinner" />
 
     <com.ekn.gruzer.gaugelibrary.ArcGauge
         android:id="@+id/tempGauge"
-        android:layout_width="146dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="92dp"
+        android:layout_width="182dp"
+        android:layout_height="177dp"
+        android:layout_marginTop="120dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.856"
+        app:layout_constraintHorizontal_bias="0.965"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deviceSpinner" />
 
     <com.ekn.gruzer.gaugelibrary.ArcGauge
         android:id="@+id/humGauge"
-        android:layout_width="146dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="256dp"
+        android:layout_width="187dp"
+        android:layout_height="173dp"
+        android:layout_marginTop="296dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deviceSpinner" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="406dp"
+        android:layout_height="68dp"
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

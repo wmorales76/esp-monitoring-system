@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ArcGauge tempGauge;
     private ArcGauge humGauge;
     private HalfGauge dangerGauge;
-    com.ekn.gruzer.gaugelibrary.Range range1, range2, range3;
+    com.ekn.gruzer.gaugelibrary.Range range1, range2, range3, danger1, danger2, danger3;
 
 
     @Override
@@ -66,15 +66,23 @@ public class MainActivity extends AppCompatActivity {
         range2.setFrom(250);range2.setTo(500);range2.setColor(getResources().getColor(R.color.orange));
         range3.setFrom(500);range3.setTo(1000);range3.setColor(getResources().getColor(R.color.red));
 
+        danger1 = new com.ekn.gruzer.gaugelibrary.Range();
+        danger2 = new com.ekn.gruzer.gaugelibrary.Range();
+        danger3 = new com.ekn.gruzer.gaugelibrary.Range();
+        danger1.setFrom(0);danger1.setTo(2);danger1.setColor(getResources().getColor(R.color.green));
+        danger2.setFrom(2);danger2.setTo(4);danger2.setColor(getResources().getColor(R.color.orange));
+        danger3.setFrom(4);danger3.setTo(5);danger3.setColor(getResources().getColor(R.color.red));
+
+
         ppmGauge = findViewById(R.id.ppmGauge);
         tempGauge = findViewById(R.id.tempGauge);
         humGauge = findViewById(R.id.humGauge);
         dangerGauge = findViewById(R.id.dangerGauge);
 
-        ppmGauge.setMinValue(0);ppmGauge.setMaxValue(1000);ppmGauge.setValue(0);
-        tempGauge.setMinValue(0);tempGauge.setMaxValue(100);tempGauge.setValue(0);
-        humGauge.setMinValue(0);humGauge.setMaxValue(100);humGauge.setValue(0);
-        dangerGauge.setMinValue(0);dangerGauge.setMaxValue(5);dangerGauge.setValue(0);
+        ppmGauge.setMinValue(0);ppmGauge.setMaxValue(1000);ppmGauge.setValue(0);ppmGauge.addRange(range1);ppmGauge.addRange(range2);ppmGauge.addRange(range3);
+        tempGauge.setMinValue(0);tempGauge.setMaxValue(100);tempGauge.setValue(0);tempGauge.addRange(range1);tempGauge.addRange(range2);tempGauge.addRange(range3);
+        humGauge.setMinValue(0);humGauge.setMaxValue(100);humGauge.setValue(0);humGauge.addRange(range1);humGauge.addRange(range2);humGauge.addRange(range3);
+        dangerGauge.setMinValue(0);dangerGauge.setMaxValue(5);dangerGauge.setValue(0);dangerGauge.addRange(danger1);dangerGauge.addRange(danger2);dangerGauge.addRange(danger3);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isLoggedIn = sharedPreferences.getBoolean("LOGGED_IN_KEY", false);
@@ -109,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         fetchDeviceList();
         startAutoRefresh();
+
     }
 
     private void fetchDeviceList() {
@@ -180,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
                     ppmGauge.setValue(Float.parseFloat(jsonResponse.getString("ppm")));
                     humGauge.setValue(Float.parseFloat(jsonResponse.getString("hum")));
+                    tempGauge.setValue(Float.parseFloat(jsonResponse.getString("temp")));
                     dangervalueView.setText(jsonResponse.getString("danger"));
                     dangerLevel = jsonResponse.getString("danger");
                     if(jsonResponse.getString("danger").equals("Low")) {
