@@ -1,0 +1,78 @@
+
+Create Database Capstone;
+
+Use Capstone;
+
+-- Parts_Per_Million // PPM
+-- Temperature // Celsius
+-- Relative_Humidity // %
+-- Danger // Low, Medium, High
+
+
+--Modified below:
+
+CREATE TABLE users (
+   User_ID INT PRIMARY KEY AUTO_INCREMENT, 
+   Username VARCHAR(50), 
+   Hash TEXT, 
+   Name TEXT, 
+   Phone TEXT, 
+   Email TEXT, 
+   Role TEXT, 
+   Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE devices (
+   Device_ID INT PRIMARY KEY AUTO_INCREMENT, 
+   Device_Name VARCHAR(45), 
+   User_ID INT, 
+   Device_UID VARCHAR(45),
+   FOREIGN KEY (User_ID) REFERENCES users(User_ID)
+);
+
+CREATE TABLE device_information (
+    Info_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Building TEXT,
+    Room TEXT,
+    Area TEXT,
+    Purpose TEXT,
+    Device_ID INT,
+    FOREIGN KEY (Device_ID) REFERENCES devices(Device_ID)
+);
+
+CREATE TABLE device_monitor (
+    Monitor_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Parts_Per_Million VARCHAR(255),
+    Temperature VARCHAR(255),
+    Relative_Humidity VARCHAR(255),
+    Danger VARCHAR(255),
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Device_ID INT,
+    FOREIGN KEY (Device_ID) REFERENCES devices(Device_ID)
+);
+
+--
+
+INSERT INTO device_monitor (Parts_Per_Million, Temperature, Relative_Humidity, Danger, Device_ID) VALUES ('50ppm', '20C', '30%', 'Low', 34);
+INSERT INTO device_monitor (Parts_Per_Million, Temperature, Relative_Humidity, Danger, Device_ID) VALUES ('60ppm', '30C', '40%', 'Medium', 35);
+INSERT INTO device_monitor (Parts_Per_Million, Temperature, Relative_Humidity, Danger, Device_ID) VALUES ('70ppm', '40C', '50%', 'High', 36);
+INSERT INTO device_monitor (Parts_Per_Million, Temperature, Relative_Humidity, Danger, Device_ID) VALUES ('50ppm', '20C', '30%', 'Low', 37);
+
+--
+
+
+
+
+
+
+
+SELECT devices.`Device_ID` AS `devices_Device_ID`, devices.`Device_Name` AS `devices_Device_Name`, devices.`User_ID` AS `devices_User_ID`, devices.`Device_UID` AS `devices_Device_UID`
+FROM devices
+WHERE devices.`User_ID` = %s
+
+
+SELECT device_monitor.Monitor_ID AS device_monitor_Monitor_ID, device_monitor.Parts_Per_Million AS device_monitor_Parts_Per_Million, device_monitor.Temperature AS device_monitor_Temperature, device_monitor.Relative_Humidity AS device_monitor_Relative_Humidity, device_monitor.Danger AS device_monitor_Danger, device_monitor.Timestamp AS device_monitor_Timestamp, device_monitor.Device_ID AS device_monitor_Device_ID 
+FROM device_monitor 
+WHERE device_monitor.Device_ID = %s ORDER BY device_monitor.Timestamp DESC 
+ LIMIT %s
+
