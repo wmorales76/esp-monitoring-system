@@ -2,6 +2,7 @@
 #include <pwmWrite.h>//for tone
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+
 #include "LiquidCrystal_I2C.h"
 #include <DHTesp.h>
 
@@ -9,8 +10,8 @@
 #define GREEN 27
 #define BLUE 25
 
-#define Device_UID "wmoralesDevice002"
-#define server "http://18.116.108.92:5000"
+#define Device_UID "wmoralesDevice001"
+#define server "http://192.168.0.243:5000"
 #define ssid "VPNet5183"
 #define password "12345678"
 
@@ -45,7 +46,6 @@ void postRequest(int ppm, float temp, float hum, String danger) {
 
   client.end();
 }
-
 void setup() 
 {
   Serial.begin(9600);
@@ -53,9 +53,8 @@ void setup()
   lcd.backlight();
   lcd.print("Initializing! :)");
   dht.setup(32, DHTesp::DHT11); // GPIO15
-  pinMode(15, OUTPUT); //Piezo
-  //pinMode(14, OUTPUT); // Gas Sensor
-  pinMode(36, INPUT); // Gas Sensor
+  pinMode(15, OUTPUT); //MQ SENSOR
+  pinMode(36, OUTPUT); //Piezo
 
   pinMode(RED, OUTPUT); // RGB
   pinMode(GREEN, OUTPUT); // RGB
@@ -75,7 +74,6 @@ void setup()
   Serial.println("Connected to WiFi");
 }
 
-
 void loop() {
   delay(1500);
   int ppm = analogRead(36);
@@ -84,7 +82,7 @@ void loop() {
   float tempF = temp * 9.0 / 5.0 + 32.0; // Convert to Fahrenheit
   Serial.print(ppm);
   Serial.print(",");
-  Serial.print("Temperature = ");
+  Serial.print(" Temperature = ");
   Serial.print(tempF);
   Serial.print("F, ");
   Serial.print("Humidity = ");
@@ -94,10 +92,10 @@ void loop() {
   if (ppm <= 1200)
   {
     danger = "Low";
-    myservo.tone(2, 0, 0); // Piezo
     analogWrite(RED, 0);
     analogWrite(GREEN, 255);
     analogWrite(BLUE, 0);
+    myservo.tone(4, 0, 0); // Piezo
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Temp: ");
@@ -109,26 +107,32 @@ void loop() {
     lcd.print("%");
   }
   else if (ppm > 1200 && ppm <= 2000)
+{
+  danger = "Med";
+  analogWrite(RED, 0);
+  analogWrite(GREEN, 0);
+  analogWrite(BLUE, 255);
+  for(int i = 0; i < 5; i++) // Beep 5 times
   {
-    danger = "Med";
-    myservo.tone(2, 5000, 65535);
-    analogWrite(RED, 0);
-    analogWrite(GREEN, 0);
-    analogWrite(BLUE, 255);
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Medium Danger:");
-    lcd.setCursor(0, 1);
-    lcd.print(ppm);
-    lcd.print("ppm");
+    myservo.tone(4, 5000);
+    delay(1000); // Beep for 1000ms
+    myservo.tone(4, 0); // Silence
+    delay(500); // Silence for 500ms
   }
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Medium Danger:");
+  lcd.setCursor(0, 1);
+  lcd.print(ppm);
+  lcd.print("ppm");
+}
   else 
   {
     danger = "High";
-    myservo.tone(2, 5000, 65535);
     analogWrite(RED, 255);
     analogWrite(GREEN, 0);
     analogWrite(BLUE, 0);
+    myservo.tone(4, 5000);
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("High Danger:");

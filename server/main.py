@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from dbmodels import *
 from hashlib import sha256
 from sqlalchemy.exc import IntegrityError
@@ -8,7 +8,7 @@ import hashlib
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://admin:wmorales@capstone-database.cbgkiweqag9q.us-east-2.rds.amazonaws.com:3306/capstone"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:wmorales@localhost:3306/capstone"
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Optional: suppresses a warning
 db.init_app(app)
@@ -22,11 +22,6 @@ def hash_password(username, password):
     string = username + password
     sha256_hash.update(string.encode('utf-8'))
     return sha256_hash.hexdigest()
-
-@app.route("/")
-def home():
-    return render_template('index.html')
-
 
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -125,7 +120,6 @@ def retrieve_device_info():
         200,
     )
 
-
 @app.route("/retrieve_monitoring_data", methods=["POST"])
 def retrieve_monitoring_data():
     data = request.get_json()
@@ -181,16 +175,18 @@ def get_data():
             .first()
         )
         if latest_data is not None:
+            temperature = latest_data.Temperature
+            temperature_numeric = ''.join(filter(str.isdigit, temperature))
+            hum_numeric = ''.join(filter(str.isdigit, latest_data.Relative_Humidity))
             return jsonify(
                 {
                     "ppm": latest_data.Parts_Per_Million,
-                    "temp": latest_data.Temperature,
-                    "hum": latest_data.Relative_Humidity,
+                    "temp": temperature_numeric,
+                    "hum": hum_numeric,
                     "danger": latest_data.Danger,
                 }
             )
         else:
-            
             return jsonify({"message":"No data available for the specified device."}), 404
     except Exception as e:
         return jsonify({"message": "Failed: " + str(e)}), 500
