@@ -100,7 +100,6 @@ public ResultSet authenticate(String Username, String Hash, String Role)
     return myDBConn.doSelect(fields, tables, whereClause);
 }
 
-
 //Method to register users on the database	
 public boolean addUser(String Username, String Hash, String Name, String Phone, String Email, String Role) 
 {
@@ -115,7 +114,6 @@ public boolean addUser(String Username, String Hash, String Name, String Phone, 
     System.out.println("Insertion result: " + res);
     return res;
 }
-
 
 //Method to add device information to the database
 public boolean addDeviceInformation(String Building, String Room, String Area, String Purpose, String Device_ID)
