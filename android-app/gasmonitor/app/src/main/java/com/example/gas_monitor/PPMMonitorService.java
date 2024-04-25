@@ -87,10 +87,30 @@ public class PPMMonitorService extends Service {
     private void triggerAlarm() {
         if (!alarmMediaPlayer.isPlaying()) {
             alarmMediaPlayer.start(); // Start playing the alarm sound
+            displayAlarmNotification();
         }
         // Implement any additional actions when the alarm is triggered
     }
+    private void displayAlarmNotification() {
+        // Create an intent for when the notification is tapped
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
+        // Create the notification
+        Notification notification = new NotificationCompat.Builder(this, "PPM_Alarm_Channel")
+                .setContentTitle("Alarm Triggered")
+                .setContentText("High PPM detected!")
+                .setSmallIcon(R.drawable.starticon) // Replace with actual icon
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true) // Auto cancel the notification when tapped
+                .build();
+
+        // Display the notification
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (manager != null) {
+            manager.notify(2, notification);
+        }
+    }
     private void stopAlarm() {
         if (alarmMediaPlayer.isPlaying()) {
             alarmMediaPlayer.stop();

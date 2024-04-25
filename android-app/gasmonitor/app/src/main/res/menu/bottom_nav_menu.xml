@@ -5,11 +5,6 @@
     android:title="@string/home" />
 
     <item
-        android:id="@+id/navigation_history"
-        android:icon="@drawable/historyicon"
-    android:title="@string/history" />
-
-    <item
         android:id="@+id/navigation_logout"
         android:icon="@drawable/logouticon"
     android:title="@string/logout" />

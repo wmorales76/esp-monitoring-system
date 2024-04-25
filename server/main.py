@@ -8,7 +8,7 @@ import hashlib
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://admin:wmorales@capstone-database.cbgkiweqag9q.us-east-2.rds.amazonaws.com:3306/capstone"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:wmorales@localhost/capstone"
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Optional: suppresses a warning
 db.init_app(app)

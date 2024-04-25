@@ -36,7 +36,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     //constant variables, flags, and other
-    private final String serverUrl = "18.220.56.59:5000";
+    private final String serverUrl = "192.168.0.215:5000";
     private boolean isUserLoggedOut = false;
     private String username;
     private  String dangerLevel = "";
@@ -100,8 +100,6 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.navigation_home) {
                 // Optionally refresh MainActivity or do nothing if it's already displaying
-            } else if (itemId == R.id.navigation_history) {
-                startHistoryActivity();
             } else if (itemId == R.id.navigation_logout) {
                 logoutUser();
             }
@@ -232,10 +230,6 @@ public class MainActivity extends AppCompatActivity {
         }
         broadcastIntent.putExtra("dangerLevel", dangerLevel);
         sendBroadcast(broadcastIntent);
-    }
-    private void startHistoryActivity() {
-        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-        startActivity(intent);
     }
     private void logoutUser() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
