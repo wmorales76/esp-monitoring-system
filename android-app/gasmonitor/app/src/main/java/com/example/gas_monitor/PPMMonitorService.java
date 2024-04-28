@@ -23,6 +23,7 @@ public class PPMMonitorService extends Service {
     private BroadcastReceiver updateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("PPM", "Received broadcast from MainActivity");
             variableFromMainActivity = intent.getStringExtra("dangerLevel");
             monitorPPM();
         }
@@ -31,25 +32,26 @@ public class PPMMonitorService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("PPM", "PPM Monitor Service created");
         alarmMediaPlayer = MediaPlayer.create(this, R.raw.sound_file); // Assuming a raw alarm_sound file
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        variableFromMainActivity = intent.getStringExtra("dangerLevel"); // Retrieve variable from MainActivity
+        Log.d("PPM", "PPM Monitor Service started");
         startForegroundService();
-        monitorPPM();
-
         // Register the receiver when the service starts
+        Log.d("PPM", "Registering receiver");
         IntentFilter filter = new IntentFilter();
         filter.addAction("UPDATE_DANGER_LEVEL");
         registerReceiver(updateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-
+Log.d("PPM", "Receiver registered");
         return START_STICKY;
     }
 
     private void startForegroundService() {
         // Create a notification channel for Android Oreo and above
+        Log.d("PPM", "Starting foreground service");
         String channelId = "PPM_Alarm_Channel";
         String channelName = "PPM Alarm Notification";
         NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
@@ -75,6 +77,7 @@ public class PPMMonitorService extends Service {
     }
 
     private void monitorPPM() {
+        Log.d("PPM", "Monitoring PPM values");
         if (variableFromMainActivity.equals("High")) {
             Log.d("PPM", "High PPM detected");
             triggerAlarm();
@@ -85,6 +88,7 @@ public class PPMMonitorService extends Service {
     }
 
     private void triggerAlarm() {
+        Log.d("PPM", "Triggering alarm");
         if (!alarmMediaPlayer.isPlaying()) {
             alarmMediaPlayer.start(); // Start playing the alarm sound
             displayAlarmNotification();

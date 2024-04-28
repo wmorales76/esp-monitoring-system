@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     }else if(jsonResponse.getString("danger").equals("High")) {
                         dangerGauge.setValue(5);
                     }
+                    Log.d("Danger Level", dangerLevel);
                     updatePPMValue();
                 }
             } catch (IOException | JSONException e) {
@@ -225,10 +226,13 @@ public class MainActivity extends AppCompatActivity {
     private void updatePPMValue() {
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("UPDATE_DANGER_LEVEL");
-        if(isUserLoggedOut){
+        broadcastIntent.setPackage(getPackageName());
+        if (isUserLoggedOut) {
             broadcastIntent.putExtra("dangerLevel", "Low");
-        }
+        } else {
         broadcastIntent.putExtra("dangerLevel", dangerLevel);
+    }
+        Log.d("Danger Level", dangerLevel);
         sendBroadcast(broadcastIntent);
     }
     private void logoutUser() {
