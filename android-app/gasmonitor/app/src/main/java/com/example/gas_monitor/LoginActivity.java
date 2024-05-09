@@ -27,7 +27,7 @@ import android.preference.PreferenceManager;
 
 public class LoginActivity extends AppCompatActivity {
     private final OkHttpClient client = new OkHttpClient();
-    private final String serverUrl = "192.168.0.215:5000";
+    private final String serverUrl = "192.168.131.89:5000";
     private EditText usernameEditText;
     private EditText passwordEditText;
     private final Handler handler = new Handler(Looper.getMainLooper());

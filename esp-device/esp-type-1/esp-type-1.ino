@@ -7,14 +7,14 @@
 
 #define RED 13
 #define GREEN 27
-#define BLUE 25
+#define BLUE 32
 #define MQ_SENSOR_PIN 36
 #define PIEZO_PIN 4
 #define DHT_PIN 15
 
-#define Device_UID "Prototype-0"
-#define server "http://192.168.0.70:5000"
-#define ssid "Raul iPhone"
+#define Device_UID "room_1_wmorales"
+#define server "http://192.168.131.89:5000"
+#define ssid "Galaxy1"
 #define password "rakudai21"
 
 LiquidCrystal_I2C lcd(0x27,16,2);
@@ -26,9 +26,9 @@ void sendToServer(int ppm, float temp, float hum, String danger) {
   String url = String(server) + "/device_monitor";
 
   DynamicJsonDocument doc(256);
-  doc["ppm"] = ppm;
-  doc["temp"] = String(temp) + "F";
-  doc["hum"] = String(hum) + "%";
+  doc["ppm"] = String(ppm);
+  doc["temp"] = String(temp);
+  doc["hum"] = String(hum);
   doc["danger"] = danger;
   doc["device_uid"] = Device_UID;
 
@@ -106,13 +106,12 @@ void loop() {
     lcd.print("%");
   }
   else if (ppm > 1200 && ppm <= 2000) {
-    danger = "Med";
+    danger = "High";
     analogWrite(RED, 0);
-    analogWrite(GREEN, 0);
+    analogWrite(GREEN, 255);
     analogWrite(BLUE, 255);
     for(int i = 0; i < 5; i++) {
       myservo.tone(PIEZO_PIN, 5000);
-      delay(1000);
       myservo.tone(PIEZO_PIN, 0);
       delay(500);
     }
@@ -125,9 +124,9 @@ void loop() {
   }
   else {
     danger = "High";
-    analogWrite(RED, 255);
+    analogWrite(RED, 0);
     analogWrite(GREEN, 0);
-    analogWrite(BLUE, 0);
+    analogWrite(BLUE, 255);
     myservo.tone(PIEZO_PIN, 5000);
     lcd.clear();
     lcd.setCursor(0, 0);

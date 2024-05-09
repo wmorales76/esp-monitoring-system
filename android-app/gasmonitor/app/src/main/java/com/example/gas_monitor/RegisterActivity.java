@@ -18,7 +18,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
-    private final String serverUrl = "192.168.0.215:5000";
+    private final String serverUrl = "192.168.131.89:5000";
     private EditText usernameEditText;
     private EditText passwordEditText;
     private EditText nameEditText;

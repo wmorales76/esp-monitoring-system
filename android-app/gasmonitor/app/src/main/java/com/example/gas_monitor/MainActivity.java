@@ -36,7 +36,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
 
     //constant variables, flags, and other
-    private final String serverUrl = "192.168.0.215:5000";
+    private final String serverUrl = "192.168.131.89:5000";
     private boolean isUserLoggedOut = false;
     private String username;
     private  String dangerLevel = "";
